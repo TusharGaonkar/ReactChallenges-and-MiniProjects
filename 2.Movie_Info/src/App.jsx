@@ -166,7 +166,7 @@ function NavBar({ onSearch, totalResults }) {
   const [theme, setTheme] = useState(() => {
     const myTheme = localStorage.getItem('myTheme');
     if (myTheme) return JSON.parse(myTheme);
-    return 'lofi';
+    return 'dracula';
   });
 
   const toggleTheme = () => {
@@ -218,24 +218,32 @@ function ShowMovies({ children }) {
   return <section className='grid grid-cols-2 gap-x-2 items-stretch'>{children}</section>;
 }
 
-function MovieResults({ query, handleClick, movies, setMovies, setImdbId, setShowWatchList }) {
+function MovieResults({ query, handleClick, movies, setMovies, setShowWatchList }) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const fetchController = new AbortController();
     const fetchMovies = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`${API}&s=${query}`);
+        const response = await fetch(`${API}&s=${query}`, { signal: fetchController.signal });
         const data = await response.json();
         setMovies(data.Search ?? movies);
       } catch (error) {
-        console.error('Error fetching movies:', error);
+        if (error.name != 'AbortError') {
+          // ignore the abort errors which browser throws in the console
+          console.error('Error fetching movies:', error);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchMovies();
+    return () => {
+      // cleanup the race conditions in the fetch
+      fetchController.abort();
+    };
   }, [query]);
 
   return (
@@ -246,7 +254,7 @@ function MovieResults({ query, handleClick, movies, setMovies, setImdbId, setSho
           <span className='loading loading-spinner loading-lg'>Getting Results</span>
         </div>
       ) : (
-        <div className='flex flex-col min-h-screen space-y-4 max-h-screen justify-between  overflow-y-scroll'>
+        <div className='flex flex-col min-h-screen space-y-4 max-h-screen overflow-y-scroll'>
           {movies.map(({ Title, Year, Poster, imdbID }) => (
             <Movie
               Title={Title}
@@ -356,6 +364,13 @@ function MovieInfo({ imdbID, setMyWatchList, myWatchList, setShowWatchList }) {
     },
     [imdbID]
   );
+
+  useEffect(() => {
+    document.title = `The Movie App | ${title}`;
+    return () => {
+      document.title = 'The Movie App';
+    };
+  }, [title]);
 
   return (
     <div className='card bg-base-100 shadow-xl flex w-full p-5'>
@@ -564,8 +579,8 @@ function MovieWatchList({ myWatchList, setMyWatchList, setShowWatchList, setImdb
 }
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState('harry potter');
-  const [imdbId, setImdbId] = useState('tt1201607');
+  const [searchQuery, setSearchQuery] = useState('Mr Bean');
+  const [imdbId, setImdbId] = useState('tt0096657');
   const [movies, setMovies] = useState([]);
   const [showWatchList, setShowWatchList] = useState(false);
   const [myWatchList, setMyWatchList] = useState(() => {
