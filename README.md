@@ -4,7 +4,7 @@ This is a personal repository for React-18 challenges and mini-projects! Each pr
 
 ## Projects
 
-| Project           | Concepts Covered                                                                                             | Live Demo               |
-| ----------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| Travel Essentials | - State Management <br>- useState() Hook <br>- Lifting up the state <br>- Reconciliation + Diffing Algorithm | [Link to the live demo] |
-| The Movie App     | - Working with side-effects<br>- useEffect() Hook <br>- Data Fetching                                        | [Link to the live demo] |
+| Project              | Concepts Covered                                                                                             | Live Demo                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| 🔆 Travel Essentials | - State Management <br>- useState() Hook <br>- Lifting up the state <br>- Reconciliation + Diffing Algorithm | <a href="https://travelessentials.netlify.app" target="_blank">🔗 Live Demo</a> |
+| 🎥 The Movie App     | - Working with side-effects<br>- useEffect() Hook <br>- Data Fetching                                        | <a href="https://themovieappbytdg.netlify.app" target="_blank">🔗 Live Demo</a> |

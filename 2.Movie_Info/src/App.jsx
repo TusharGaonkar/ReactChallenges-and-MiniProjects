@@ -1,13 +1,13 @@
 /*Author: Tushar Gaonkar
 Title: The Movie App 🎥
 ⚠️ Not responsive, not split into different files!
-Components used from daisy-ui. 👍🏻
+Credits : Components used from daisy-ui. , Movie API by omdbapi👍🏻
 Date: 7th July 2023. 🙂
 */
 
 import { useState, useEffect } from 'react';
 
-const API = `http://www.omdbapi.com/?apikey=807b139b&`;
+const API = `https://www.omdbapi.com/?apikey=807b139b&`;
 
 function Search({ onSearch }) {
   return (
@@ -579,8 +579,8 @@ function MovieWatchList({ myWatchList, setMyWatchList, setShowWatchList, setImdb
 }
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState('Mr Bean');
-  const [imdbId, setImdbId] = useState('tt0096657');
+  const [searchQuery, setSearchQuery] = useState('Harry potter');
+  const [imdbId, setImdbId] = useState('tt1201607');
   const [movies, setMovies] = useState([]);
   const [showWatchList, setShowWatchList] = useState(false);
   const [myWatchList, setMyWatchList] = useState(() => {
