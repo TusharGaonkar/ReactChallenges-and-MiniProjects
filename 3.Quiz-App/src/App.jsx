@@ -4,13 +4,21 @@ import StartQuiz from './StartQuiz';
 import LoadQuiz from './LoadQuiz';
 import Questions from './Questions';
 import toast, { Toaster } from 'react-hot-toast';
+import ProgressBar from './ProgressBar';
+import Timer from './Timer';
+import Results from './Results';
 import { useReducer, useEffect } from 'react';
 
-const initialiState = {
+const initialState = {
   status: 'inactive',
   totalQuestions: 10,
+  totalCorrectAnswers: 0,
   difficulty: 'Medium',
   index: 0,
+  timer: { minutes: 10, seconds: 0 },
+  selectedAnswer: -1,
+  selectedAnswerId: -1,
+  score: 0,
 };
 
 function reducer(state, action) {
@@ -23,49 +31,58 @@ function reducer(state, action) {
       return { ...state, totalQuestions: action.payload };
     case 'setStatus':
       return { ...state, status: action.payload };
+    case 'setTimer':
+      return { ...state, timer: action.payload };
+    case 'setSelectedAnswer':
+      return {
+        ...state,
+        selectedAnswer: action.payload.answer,
+        selectedAnswerId: action.payload.answerId,
+      };
     case 'questionsFetched':
       return { ...state, status: 'ready', questionList: action.payload };
     case 'moveToNext':
       if (state.index < state.totalQuestions - 1) {
-        return { ...state, index: state.index + 1 };
+        return { ...state, index: state.index + 1, selectedAnswer: -1, selectedAnswerId: -1 }; //reset
       } else return state;
+    case 'decTimer':
+      if (state.timer.minutes >= 0) {
+        let seconds = state.timer.seconds;
+        let minutes = state.timer.minutes;
+        seconds = (--seconds + 60) % 60;
+        if (seconds == 59) --minutes;
+        if (minutes >= 0) return { ...state, timer: { minutes, seconds } };
+      }
+      return initialState;
+    case 'evaluateAnswer':
+      if (action.payload.type === 'correct')
+        return {
+          ...state,
+          totalCorrectAnswers: state.totalCorrectAnswers + 1,
+          score: state.score + action.payload.score,
+        };
+      else if (action.payload.type === 'wrong')
+        return { ...state, score: state.score - action.payload.score };
+      else return state;
     default:
       return state;
   }
 }
 
-function ProgressBar({ currentQuestion, totalQuestions }) {
-  const progress = Math.floor((currentQuestion / totalQuestions) * 100);
-  console.log(progress);
-  return (
-    <div className='max-w-sm mx-auto mt-8 h-2'>
-      <span id='ProgressLabel' className='sr-only'>
-        Loading
-      </span>
-
-      <span
-        role='progressbar'
-        aria-labelledby='ProgressLabel'
-        aria-valuenow={progress}
-        className='block rounded-full bg-gray-200'
-      >
-        <span
-          className='block h-4 rounded-full bg-green-400 text-center text-[10px]/4'
-          style={{ width: `${progress}%` }}
-        >
-          <span className='font-bold text-white'>
-            {' '}
-            {currentQuestion}/{totalQuestions}
-          </span>
-        </span>
-      </span>
-    </div>
-  );
-}
-
 function App() {
-  const [state, dispatch] = useReducer(reducer, initialiState);
-  const { subject, difficulty, totalQuestions, status, questionList, index } = state;
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    subject,
+    difficulty,
+    totalQuestions,
+    totalCorrectAnswers,
+    status,
+    questionList,
+    index,
+    selectedAnswer,
+    selectedAnswerId,
+    score,
+  } = state;
   console.log(state);
   const topicList = [
     'JavaScript',
@@ -74,11 +91,15 @@ function App() {
     'Laravel',
     'Linux',
     'DevOps',
-    'Networking',
     'Docker',
     'Kubernetes',
     'Bash',
   ];
+  useEffect(() => {
+    if (index == totalQuestions - 1) {
+      toast.success('Successfully Submitted the test');
+    }
+  }, [index]);
 
   useEffect(
     function () {
@@ -89,7 +110,7 @@ function App() {
         fetch(`${API}&tags=${subject}&difficulty=${difficulty}&limit=${totalQuestions}`)
           .then((response) => response.json())
           .then((data) => {
-            if (!data.error) {
+            if (!data.error && data.length === totalQuestions) {
               dispatch({ type: 'questionsFetched', payload: data });
               dispatch({ type: 'setStatus', payload: 'ready' });
             } else dispatch({ type: 'setStatus', payload: 'error' });
@@ -112,18 +133,42 @@ function App() {
       <Header />
       <Topics topicList={topicList} status={status} dispatch={dispatch} />
       <Toaster position='top-right' />
-      {status != 'ready' && status != 'onProgress' && (
+      {status != 'ready' && status != 'onProgress' && status != 'finished' && (
         <LoadQuiz state={state} dispatch={dispatch} />
       )}
       {status == 'ready' && (
-        <StartQuiz subject={subject} totalQuestions={totalQuestions} dispatch={dispatch} />
+        <StartQuiz
+          subject={subject}
+          totalQuestions={totalQuestions}
+          difficulty={difficulty}
+          dispatch={dispatch}
+        />
       )}
 
       {status == 'onProgress' && (
         <>
-          <ProgressBar currentQuestion={index + 1} totalQuestions={totalQuestions} />
-          <Questions fetchedQuestion={questionList[index]} dispatch={dispatch} />
+          <ProgressBar currentQuestion={index + 1} totalQuestions={totalQuestions}>
+            {/* <Timer state={state} dispatch={dispatch} /> */}
+          </ProgressBar>
+
+          <Questions
+            totalQuestions={totalQuestions}
+            index={index}
+            selectedAnswer={selectedAnswer}
+            selectedAnswerId={selectedAnswerId}
+            fetchedQuestion={questionList[index]}
+            dispatch={dispatch}
+          />
         </>
+      )}
+      {status == 'finished' && (
+        <Results
+          subject={subject}
+          difficulty={difficulty}
+          totalCorrectAnswers={totalCorrectAnswers}
+          totalQuestions={totalQuestions}
+          score={score}
+        />
       )}
     </div>
   );

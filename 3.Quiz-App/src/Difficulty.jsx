@@ -14,7 +14,7 @@ export default function Difficulty({ status, dispatch }) {
             dispatch({ type: 'setDifficulty', payload: e.target.value });
           }}
           defaultValue='Medium'
-          disabled={status == 'ready'}
+          disabled={status == 'ready' || status == 'onProgress'}
         >
           <option value='Easy'>Easy</option>
           <option value='Medium'>Medium</option>
@@ -34,7 +34,7 @@ export default function Difficulty({ status, dispatch }) {
             dispatch({ type: 'setTotalQuestions', payload: e.target.value });
           }}
           defaultValue='10'
-          disabled={status == 'ready'}
+          disabled={status == 'ready' || status == 'onProgress'}
         >
           <option value='5'>5</option>
           <option value='10'>10</option>

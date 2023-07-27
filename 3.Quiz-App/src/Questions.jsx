@@ -1,51 +1,37 @@
 import nextSound from '../public/657947__matrixxx__horror-inspect-sound-ui-or-in-game-notification-01.wav';
 import finishSound from '../public/619840__eponn__achievement-accomplish-jingle-app-ui.wav';
 import useSound from 'use-sound';
+import Answer from './Answer';
 
-function Answer({ answer }) {
-  return (
-    <>
-      <div>
-        <input
-          type='radio'
-          name='answers'
-          value=''
-          id={answer}
-          className='peer hidden [&:checked_+_label_svg]:block'
-        />
+export default function Questions({
+  index,
+  totalQuestions,
+  selectedAnswer,
+  selectedAnswerId,
+  fetchedQuestion,
+  dispatch,
+}) {
+  const { question, answers, correct_answers } = fetchedQuestion;
+  const [playNextSound] = useSound(nextSound);
+  const [playFinishedSound] = useSound(finishSound);
 
-        <label
-          htmlFor={answer}
-          className='flex cursor-pointer items-center justify-between rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 peer-checked:border-blue-500 peer-checked:ring-1 peer-checked:ring-blue-500'
-        >
-          <div className='flex items-center gap-2'>
-            <svg
-              className='hidden h-5  text-blue-600 w-14'
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 20 20'
-              fill='currentColor'
-            >
-              <path
-                fillRule='evenodd'
-                d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-                clipRule='evenodd'
-              />
-            </svg>
+  function evaluateAnswer() {
+    return correct_answers[`${selectedAnswerId}_correct`] === 'true';
+  }
 
-            <p className='text-gray-700'>{answer}</p>
-          </div>
-        </label>
-      </div>
-    </>
-  );
-}
-
-export default function Questions({ fetchedQuestion, dispatch }) {
-  const { question, answers } = fetchedQuestion;
-  const [playSound] = useSound(nextSound);
   function handleNext(e) {
+    // this evaluates too !!
     e.preventDefault();
-    playSound();
+    if (index == totalQuestions - 1) {
+      playFinishedSound();
+      dispatch({
+        type: 'setStatus',
+        payload: 'finished',
+      });
+    } else playNextSound();
+    if (evaluateAnswer()) {
+      dispatch({ type: 'evaluateAnswer', payload: { type: 'correct', score: 10 } });
+    } else dispatch({ type: 'evaluateAnswer', payload: { type: 'wrong', score: 0 } });
     dispatch({ type: 'moveToNext' });
   }
   return (
@@ -56,17 +42,21 @@ export default function Questions({ fetchedQuestion, dispatch }) {
         </div>
         <fieldset className='space-y-4'>
           <legend className='sr-only'>Answers</legend>
-          {Object.values(answers)
-            .filter((answer) => answer !== null)
-            .map((answer) => (
-              <Answer answer={answer} key={answer} />
-            ))}
+          {Object.entries(answers)
+            .filter(([_, value]) => {
+              return value !== null && value != '';
+            })
+            .map(([answerOption, value]) => {
+              return (
+                <Answer answer={value} answerId={answerOption} key={value} dispatch={dispatch} />
+              );
+            })}
         </fieldset>
         <div className='max-w-sm self-end mt-6'>
           <button
-            className='group relative inline-flex items-center overflow-hidden rounded bg-indigo-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500'
-            href='/download'
+            className='disabled:bg-gray-500 disabled:cursor-not-allowed group relative inline-flex items-center overflow-hidden rounded bg-indigo-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500'
             onClick={(e) => handleNext(e)}
+            disabled={selectedAnswer === -1}
           >
             <span className='absolute -end-full transition-all group-hover:end-4'>
               <svg
@@ -85,7 +75,9 @@ export default function Questions({ fetchedQuestion, dispatch }) {
               </svg>
             </span>
 
-            <span className='text-sm font-medium transition-all group-hover:me-4'>Next</span>
+            <span className='text-sm font-medium transition-all group-hover:me-4'>
+              {index < totalQuestions - 1 ? 'Next' : 'Finish'}
+            </span>
           </button>
         </div>
       </div>
