@@ -4,6 +4,7 @@ export default function Results({
   totalCorrectAnswers,
   totalQuestions,
   score,
+  dispatch,
 }) {
   return (
     <section className='bg-white'>
@@ -12,10 +13,27 @@ export default function Results({
           <h2 className='text-3xl font-bold text-gray-900 sm:text-4xl'>
             Your {subject} Quiz Results🔥
           </h2>
+          <div className='flex justify-evenly items-baseline mt-3'>
+            <p className='mt-4 text-gray-500 sm:text-xl'>
+              Please feel free to retake the quiz and improve your scores..
+            </p>
+            <button
+              className='group relative inline-block focus:outline-none focus:ring'
+              onClick={(e) => {
+                e.preventDefault();
+                dispatch({
+                  type: 'retakeQuiz',
+                  payload: { subject: subject, difficulty, totalQuestions },
+                });
+              }}
+            >
+              <span className='absolute inset-0 translate-x-1.5 translate-y-1.5 bg-yellow-300 transition-transform group-hover:translate-y-0 group-hover:translate-x-0'></span>
 
-          <p className='mt-4 text-gray-500 sm:text-xl'>
-            Please feel free to retake the quiz and improve your scores..
-          </p>
+              <span className='relative inline-block border-2 border-current px-8 py-3 text-sm font-bold uppercase tracking-widest text-black group-active:text-opacity-75'>
+                🔄️Retake
+              </span>
+            </button>
+          </div>
         </div>
 
         <div className='mt-8 sm:mt-12'>

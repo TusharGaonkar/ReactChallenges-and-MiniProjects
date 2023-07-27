@@ -7,15 +7,17 @@ import toast, { Toaster } from 'react-hot-toast';
 import ProgressBar from './ProgressBar';
 import Timer from './Timer';
 import Results from './Results';
+import Footer from './Footer';
 import { useReducer, useEffect } from 'react';
 
 const initialState = {
   status: 'inactive',
   totalQuestions: 10,
+  subject: null,
   totalCorrectAnswers: 0,
   difficulty: 'Medium',
   index: 0,
-  timer: { minutes: 10, seconds: 0 },
+  timer: { minutes: 0, seconds: 0 },
   selectedAnswer: -1,
   selectedAnswerId: -1,
   score: 0,
@@ -53,7 +55,7 @@ function reducer(state, action) {
         if (seconds == 59) --minutes;
         if (minutes >= 0) return { ...state, timer: { minutes, seconds } };
       }
-      return initialState;
+      return { ...state, status: 'finished' };
     case 'evaluateAnswer':
       if (action.payload.type === 'correct')
         return {
@@ -64,6 +66,20 @@ function reducer(state, action) {
       else if (action.payload.type === 'wrong')
         return { ...state, score: state.score - action.payload.score };
       else return state;
+    case 'retakeQuiz':
+      return {
+        ...initialState,
+        status: 'ready ',
+        subject: action.payload.subject,
+        difficulty: action.payload.difficulty,
+        totalQuestions: action.payload.totalQuestions,
+      };
+    case 'resetState':
+      return {
+        ...initialState,
+        difficulty: state.difficulty,
+        totalQuestions: state.totalQuestions,
+      };
     default:
       return state;
   }
@@ -96,10 +112,10 @@ function App() {
     'Bash',
   ];
   useEffect(() => {
-    if (index == totalQuestions - 1) {
+    if (status === 'finished') {
       toast.success('Successfully Submitted the test');
     }
-  }, [index]);
+  }, [status]);
 
   useEffect(
     function () {
@@ -110,17 +126,23 @@ function App() {
         fetch(`${API}&tags=${subject}&difficulty=${difficulty}&limit=${totalQuestions}`)
           .then((response) => response.json())
           .then((data) => {
-            if (!data.error && data.length === totalQuestions) {
+            if (data.length === totalQuestions) {
               dispatch({ type: 'questionsFetched', payload: data });
               dispatch({ type: 'setStatus', payload: 'ready' });
             } else dispatch({ type: 'setStatus', payload: 'error' });
+          })
+          .catch(() => {
+            console.log('caught in catch');
+            toast.error(`Server down please try later!`); // server side errors other than insufficient data
+            dispatch({ type: 'resetState' });
           });
       }
-      if (subject && status === 'loading') fetchQuestions(subject, difficulty, totalQuestions);
 
-      if (status == 'error') {
+      if (subject && status === 'loading') fetchQuestions(subject, difficulty, totalQuestions);
+      if (status === 'error') {
+        console.log('caught here in status');
         toast.error(
-          `Oops! No ${difficulty} questions found for ${subject}. Please try different parameters. 🫠`
+          `Oops! No ${difficulty} questions found for ${subject}.Please try with different parameters..`
         );
         dispatch({ type: 'setStatus', payload: 'active' });
       }
@@ -129,9 +151,15 @@ function App() {
   );
 
   return (
-    <div className='bg-gray-50 h-screen'>
+    <div className='bg-gray-50 h-screen font-mono'>
       <Header />
-      <Topics topicList={topicList} status={status} dispatch={dispatch} />
+      <Topics
+        difficulty={difficulty}
+        totalQuestions={totalQuestions}
+        topicList={topicList}
+        status={status}
+        dispatch={dispatch}
+      />
       <Toaster position='top-right' />
       {status != 'ready' && status != 'onProgress' && status != 'finished' && (
         <LoadQuiz state={state} dispatch={dispatch} />
@@ -148,7 +176,7 @@ function App() {
       {status == 'onProgress' && (
         <>
           <ProgressBar currentQuestion={index + 1} totalQuestions={totalQuestions}>
-            {/* <Timer state={state} dispatch={dispatch} /> */}
+            <Timer state={state} dispatch={dispatch} />
           </ProgressBar>
 
           <Questions
@@ -168,8 +196,10 @@ function App() {
           totalCorrectAnswers={totalCorrectAnswers}
           totalQuestions={totalQuestions}
           score={score}
+          dispatch={dispatch}
         />
       )}
+      {/* <Footer /> */}
     </div>
   );
 }

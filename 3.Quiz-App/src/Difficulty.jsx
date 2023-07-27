@@ -1,4 +1,4 @@
-export default function Difficulty({ status, dispatch }) {
+export default function Difficulty({ status, difficulty, totalQuestions, dispatch }) {
   return (
     <section className='flex space-x-5 flex-wrap'>
       <div className='flex justify-between items-baseline space-x-3'>
@@ -13,7 +13,7 @@ export default function Difficulty({ status, dispatch }) {
           onChange={(e) => {
             dispatch({ type: 'setDifficulty', payload: e.target.value });
           }}
-          defaultValue='Medium'
+          defaultValue={difficulty}
           disabled={status == 'ready' || status == 'onProgress'}
         >
           <option value='Easy'>Easy</option>
@@ -31,9 +31,9 @@ export default function Difficulty({ status, dispatch }) {
           id='totalQuestions'
           className='mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm'
           onChange={(e) => {
-            dispatch({ type: 'setTotalQuestions', payload: e.target.value });
+            dispatch({ type: 'setTotalQuestions', payload: Number(e.target.value) });
           }}
-          defaultValue='10'
+          defaultValue={`${totalQuestions}`}
           disabled={status == 'ready' || status == 'onProgress'}
         >
           <option value='5'>5</option>
