@@ -1,7 +1,7 @@
 /*Author: Tushar Gaonkar
 Title: Tech Quiz App 🤹🏻‍♀️
 ⚠️ Not responsive, not!
-Credits : Components used from hyperui.dev, Quiz API by quizapi.io👍🏻
+Credits : UI-Components used from hyperui.dev, Quiz API by quizapi.io👍🏻
 Date: 15th July 2023. 🙂
 */
 import Header from './Header';
