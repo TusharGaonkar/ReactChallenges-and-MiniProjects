@@ -5,6 +5,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
+        heading: ['Monoton', 'Gloria Hallelujah', 'cursive'],
         mono: ['Poppins', 'sans-serif'],
       },
     },
