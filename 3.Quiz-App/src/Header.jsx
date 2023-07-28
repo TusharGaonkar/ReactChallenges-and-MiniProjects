@@ -1,3 +1,5 @@
+import logo from '../public/quiz (1).png';
+
 export default function Header() {
   return (
     <header className='bg-gray-50'>
@@ -5,7 +7,7 @@ export default function Header() {
         <div className='sm:flex sm:items-center sm:justify-center'>
           <div className='text-center sm:text-left'>
             <div className='flex justify-center items-center space-x-2'>
-              <img src='../public/quiz (1).png' className='w-[50px]'></img>
+              <img src={logo} className='w-[50px]'></img>
               <h1 className='text-[#000000ff] text-4xl text-center font-heading'>Tech Quiz App!</h1>
             </div>
             <p className='text-sm text-[#D59C57] text-end'>Assess your tech skills now 🤹🏻‍♀️</p>

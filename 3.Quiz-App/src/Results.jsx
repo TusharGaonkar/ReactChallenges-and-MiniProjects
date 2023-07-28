@@ -1,3 +1,5 @@
+import coolLady from '../public/3d-business-girl-chatting-online.png';
+
 export default function Results({
   subject,
   difficulty,
@@ -17,10 +19,7 @@ export default function Results({
 
         <div className='mt-6 sm:mt-10'>
           <dl className='grid grid-cols-1 gap-4 sm:grid-cols-4'>
-            <img
-              src='../public/3d-business-girl-chatting-online.png'
-              className='relative z-10 left-5'
-            ></img>
+            <img src={coolLady} className='relative z-10 left-5'></img>
             <div className='flex flex-col rounded-lg justify-center bg-blue-100 px-4 py-8 text-center'>
               <dt className='order-last text-lg font-medium text-gray-500'>Difficulty</dt>
 

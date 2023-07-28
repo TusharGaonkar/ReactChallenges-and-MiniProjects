@@ -1,3 +1,6 @@
+import coolBoy from '../public/3d-casual-life-school-boy-reading-book-with-headphones-on.png';
+import coolGirl from '../public/3d-casual-life-young-woman-sitting-on-floor-in-headphones.png';
+
 export default function LoadQuiz({ state, dispatch }) {
   const { subject, difficulty, totalQuestions, status } = state;
 
@@ -10,11 +13,7 @@ export default function LoadQuiz({ state, dispatch }) {
     <section className='rounded-3xl shadow-2xl max-w-5xl mx-auto mt-8 flex'>
       <div className='mx-auto flex flex-row items-center justify-center gap-0'>
         <div className='relative' style={{ top: '40px', marginLeft: '-10px' }}>
-          <img
-            src='../public/3d-casual-life-school-boy-reading-book-with-headphones-on.png'
-            alt='Avatar'
-            className='h-[350px] object-cover'
-          />
+          <img src={coolBoy} alt='Avatar' className='h-[350px] object-cover' />
         </div>
         <div className='flex flex-col items-center justify-start'>
           <h2 className='text-2xl font-bold min-w-max'>
@@ -46,11 +45,7 @@ export default function LoadQuiz({ state, dispatch }) {
     // If no subject is selected, show image and text in a flex column layout
     <section className='rounded-3xl shadow-2xl max-w-lg p-4 mx-auto mt-8'>
       <div className='flex flex-col items-center'>
-        <img
-          src='../public/3d-casual-life-young-woman-sitting-on-floor-in-headphones.png'
-          alt='Avatar'
-          className='w-40 h-40 sm:w-48 sm:h-48 object-cover'
-        />
+        <img src={coolGirl} alt='Avatar' className='w-40 h-40 sm:w-48 sm:h-48 object-cover' />
         <h2 className='mt-6 text-2xl font-bold min-w-max'>Please Select the Subject 😇!</h2>
       </div>
     </section>
