@@ -36,9 +36,12 @@ export default function Questions({
   }
   return (
     <>
-      <div className='max-w-md mx-auto flex flex-col mt-5'>
+      <div className='max-w-md mx-auto flex flex-col mt-3'>
         <div className='flex justify-evenly items-center bg-amber-100  text-amber-700'>
-          <p className='text-md font-semibold p-6'>{question}</p>
+          <p className='text-md font-semibold p-6'>
+            {`${index + 1}. `}
+            {question}
+          </p>
         </div>
         <fieldset className='space-y-4'>
           <legend className='sr-only'>Answers</legend>
@@ -52,7 +55,7 @@ export default function Questions({
               );
             })}
         </fieldset>
-        <div className='max-w-sm self-end mt-6'>
+        <div className='max-w-sm self-end mt-6 mb-9'>
           <button
             className='disabled:bg-gray-500 disabled:cursor-not-allowed group relative inline-flex items-center overflow-hidden rounded bg-indigo-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500'
             onClick={(e) => handleNext(e)}

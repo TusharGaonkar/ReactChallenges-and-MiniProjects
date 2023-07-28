@@ -1,3 +1,9 @@
+/*Author: Tushar Gaonkar
+Title: Tech Quiz App 🤹🏻‍♀️
+⚠️ Not responsive, not!
+Credits : Components used from hyperui.dev, Quiz API by quizapi.io👍🏻
+Date: 15th July 2023. 🙂
+*/
 import Header from './Header';
 import Topics from './Topics';
 import StartQuiz from './StartQuiz';
@@ -15,7 +21,7 @@ const initialState = {
   totalQuestions: 10,
   subject: null,
   totalCorrectAnswers: 0,
-  difficulty: 'Medium',
+  difficulty: 'Easy',
   index: 0,
   timer: { minutes: 0, seconds: 0 },
   selectedAnswer: -1,
@@ -99,11 +105,13 @@ function App() {
     selectedAnswerId,
     score,
   } = state;
-  console.log(state);
+  // console.log(state); debugger;
   const topicList = [
+    'MySQL',
     'JavaScript',
     'HTML',
     'PHP',
+    'WordPress',
     'Laravel',
     'Linux',
     'DevOps',
@@ -138,7 +146,8 @@ function App() {
           });
       }
 
-      if (subject && status === 'loading') fetchQuestions(subject, difficulty, totalQuestions);
+      if (subject != null && status === 'loading')
+        fetchQuestions(subject, difficulty, totalQuestions);
       if (status === 'error') {
         console.log('caught here in status');
         toast.error(
@@ -151,7 +160,7 @@ function App() {
   );
 
   return (
-    <div className='bg-gray-50 h-screen font-mono'>
+    <div className='bg-gray-30 h-screen font-mono'>
       <Header />
       <Topics
         difficulty={difficulty}
@@ -199,7 +208,7 @@ function App() {
           dispatch={dispatch}
         />
       )}
-      {/* <Footer /> */}
+      {status != 'onProgress' && status != 'finished' && <Footer />}
     </div>
   );
 }
