@@ -27,7 +27,8 @@ export default function Timer({ state, dispatch }) {
           : ` bg-green-500 px-4 py-2 rounded-full text-white font-semibold`
       }
     >
-      🕧{state.timer.minutes < 10 && 0}
+      {'⌛'}
+      {state.timer.minutes < 10 && 0}
       {state.timer.minutes}:{state.timer.seconds < 10 && 0}
       {state.timer.seconds}
     </button>
