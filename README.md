@@ -10,4 +10,3 @@ This is a personal repository for React-18 challenges and mini-projects! Each pr
 | 🎥 The Movie App     | - Working with side-effects<br>- useEffect() Hook <br>- Data Fetching                                        | [🔗 Live Demo](https://themovieappbytdg.netlify.app)                           |
 | 🤹🏻‍♀️ Tech Quiz App     | - Advanced useReducer Hook() <br>- Custom state management                                                 | [🔗 Live Demo](https://techquizapptdg.netlify.app/)                            |
 
-Feel free to explore these projects and use them to enhance your React-18 skills. Each project's live demo will give you a hands-on experience with different React concepts. Happy coding!
